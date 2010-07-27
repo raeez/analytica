@@ -1,5 +1,4 @@
 require 'gchart'
-
 basereq 'strict/strict'
 
 module Analytica
@@ -19,7 +18,8 @@ module Analytica
     end
 
     def sum
-      inject( nil ) { |sum, x| sum ? sum + x : x }
+      sum = inject { |sum, x| sum + x }
+      sum ? sum : 0
     end
     
     def mean
@@ -27,10 +27,11 @@ module Analytica
     end
 
     def moving_average(params)
-      validate_map!({
+      enforce_map!({
         :decay => [:exponential, :linear],
         :decay_coefficent => :float}, params)
 
+      raise "moving_average not yet implemented!"
     end
     
     def piecewise_derivative(n=1)
@@ -38,9 +39,27 @@ module Analytica
 
       d = self
       n.times do
-        d = 
+        d = d.inject([]) do |result, item|
+          if result.size == 0
+            result << item
+          else
+            d_y = (item - result.last).to_f
+            d_x = 1.0 #account for d_x eventually
+            deriv = d_y/d_x
+            result.pop
+            result << deriv
+            result << item unless (result.size) == (d.size-1)
+            result
+          end
+        end
       end
-      d
+      DataSet.new(d)
+    end
+
+    def savitzky_golay(n=1)
+      enforce!(:natural_number, n)
+
+      raise "savitzy_golay filter not yet implemented!"
     end
 
     def datamax
@@ -48,7 +67,7 @@ module Analytica
     end
 
     def to_linegraph(params)
-      validate_map!({
+      enforce_map!({
         :width => :natural_number,
         :height => :natural_number,
         :background_color => :hex_color,
@@ -69,7 +88,7 @@ module Analytica
     end
 
     def to_bargraph(params)
-      validate_map!({
+      enforce_map!({
         :width => :natural_number,
         :height => :natural_number,
         :orientation => [:vertical, :horizontal],
