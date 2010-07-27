@@ -3,3 +3,5 @@ Ruby wrapper abstracting basic data-analysis.
 	-graph plotting
 	-derivatives
 	-indicators [sum mean, moving average etc.]
+
+	requires Strict
