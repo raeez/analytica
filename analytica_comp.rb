@@ -11,13 +11,62 @@ module Computation
   def mean
     sum.to_f / size
   end
+ 
+  def lma(params)
+    linear_moving_average(params)
+  end
 
-  def moving_average(params)
+  def linear_moving_average(params)
+    enforce_map!({
+      :bias => [:last, :first],
+      :samples => :integer}, params)
+
+    data = []
+    case params[:bias]
+    when :last
+      data = self.reverse
+    when :first
+      data = self
+    else
+      raise "Bias not legally set!"
+    end
+    
+    raise "too few samples available to calculate lma at given :samples input" if params[:samples] > size
+    
+    n = params[:samples] + 1
+    numerator = 0.0
+    denominator = 0.0
+
+    data.each do |sample|
+      n -= 1
+      n = n > 0 ? n : 0
+
+      numerator += n*sample
+      denominator += n
+    end
+    numerator / denominator
+  end
+
+  def ema(params)
+    exponential_moving_average(params)
+  end
+
+  def exponential_moving_average(params)
     enforce_map!({
       :decay => [:exponential, :linear],
+      :decay_bias => [:latest, :oldest],
       :decay_coefficent => :float}, params)
 
-    raise "moving_average not yet implemented!"
+    if params[:decay_bias] == :latest
+      data = self
+    else
+      data = self.reverse
+    end
+    0.0
+  end
+
+  def dydx(n=1)
+    piecewise_derivative(n)
   end
   
   def piecewise_derivative(n=1)

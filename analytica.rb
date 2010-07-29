@@ -16,5 +16,10 @@ module Analytica
 
       super datapoints
     end
+
+    def <<(object)
+      enforce!(:numeric, object)
+      super object
+    end
   end
 end
