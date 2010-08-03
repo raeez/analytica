@@ -1,0 +1,7 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/analytica
+lib/analytica.rb
+test/test_analytica.rb
