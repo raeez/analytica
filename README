@@ -4,4 +4,4 @@ Ruby wrapper abstracting basic data-analysis.
 	-derivatives
 	-indicators [sum mean, moving average etc.]
 
-	requires Strict
+	required gems: strict
