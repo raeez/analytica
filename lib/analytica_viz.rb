@@ -48,7 +48,7 @@ module Visualization
       g.data = self
       g.extras = {
         'chm' => 'N*cUSD0*,000000,0,-1,11', 
-        'chbh' => '18,38',
+        'chbh' => '45,30',
         'chds' => "0,#{datamax}"
       }
       g.size = "#{(params[:width]).to_i}x#{(params[:height]).to_i}"

@@ -4,4 +4,6 @@ README.txt
 Rakefile
 bin/analytica
 lib/analytica.rb
+lib/analytica_comp.rb
+lib/analytica_viz.rb
 test/test_analytica.rb

@@ -6,7 +6,7 @@ require 'typestrict'
 require 'lib/analytica'
 
 Hoe.spec 'Analytica' do
-  self.version = Analaytica::VERSION
+  self.version = Analytica::VERSION
   self.name = 'analytica'
   self.author = 'Raeez Lorgat'
   self.description = 'Data Analysis wrapper for ruby arrays'
