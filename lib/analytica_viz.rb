@@ -2,6 +2,12 @@ require 'typestrict'
 
 require 'gchart'
 
+class GChart::Base
+  def to_html
+    "<img src=\"#{self.to_url}\" />"
+  end
+end
+
 module Visualization
   include Strict
 
