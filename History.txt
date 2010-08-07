@@ -1,5 +1,13 @@
 === 0.0.5 / 2010-08-03
 
+* 3 enhancements
+
+  * Cleaned up some of the computation implementation
+  * Analytica::DataSet can now has a default constructor (empty DataSet)
+  * alias_method is now being correctly used
+
+=== 0.0.5 / 2010-08-03
+
 * 1 major enhancement
 
   * Birthday!

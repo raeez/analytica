@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), 'analytica_comp')
 require File.join(File.dirname(__FILE__), 'analytica_viz')
 
 module Analytica
-  VERSION = '0.0.5'
+  VERSION = '0.0.6'
 
   include Strict
 
@@ -12,7 +12,7 @@ module Analytica
     include Computation
     include Visualization
 
-    def initialize(datapoints)
+    def initialize(datapoints=[])
       enforce!(:numeric_array, datapoints)
 
       super datapoints

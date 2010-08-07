@@ -12,10 +12,6 @@ module Computation
     sum.to_f / size
   end
  
-  def lma(params)
-    linear_moving_average(params)
-  end
-
   def linear_moving_average(params)
     enforce_map!({
       :bias => [:last, :first],
@@ -31,7 +27,7 @@ module Computation
       raise "Bias not legally set!"
     end
     
-    raise "too few samples available to calculate lma at given :samples input" if params[:samples] > size
+    params[:samples] = [params[:samples], data.size]
     
     n = params[:samples] + 1
     numerator = 0.0
@@ -47,15 +43,15 @@ module Computation
     numerator / denominator
   end
 
-  def ema(params)
-    exponential_moving_average(params)
-  end
+  alias_method :lma, :linear_moving_average
 
   def exponential_moving_average(params)
     enforce_map!({
       :decay => [:exponential, :linear],
       :decay_bias => [:latest, :oldest],
       :decay_coefficent => :float}, params)
+
+      raise "ema not yet implemented!"
 
     if params[:decay_bias] == :latest
       data = self
@@ -65,10 +61,8 @@ module Computation
     0.0
   end
 
-  def dydx(n=1)
-    piecewise_derivative(n)
-  end
-  
+  alias_method :ema, :exponential_moving_average
+
   def piecewise_derivative(n=1)
     enforce!(:natural_number, n)
 
@@ -90,6 +84,8 @@ module Computation
     end
     DataSet.new(d)
   end
+
+  alias_method :dydx, :piecewise_derivative
 
   def savitzky_golay(n=1)
     enforce!(:natural_number, n)
