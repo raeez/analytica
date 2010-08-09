@@ -37,8 +37,6 @@ module Analytica
         :bias => [:last, :first],
         :samples => :natural_number}, params)
 
-      data = []
-      
       data = self
       data.reverse! if params[:bias] == :last
       
@@ -61,9 +59,33 @@ module Analytica
     def exponential_mean(params)
       enforce_map!({
         :bias => [:last, :first],
+        :alpha => :numeric,
         :samples => :integer}, params)
 
-        raise "exponential_mean NYI"
+        data = self
+        data.reverse! if params[:bias] == :last
+
+        params[:samples] = [params[:samples], data.size].min
+
+        ema = 0
+        counter = 0
+        alpha = params[:alpha]
+
+        data.each do |sample|
+
+          if counter > params[:samples]
+            break
+          end
+
+          if counter == 0
+            ema += sample
+          else
+            ema += sample * (1-alpha)**counter
+          end
+          
+          counter += 1
+        end
+        alpha*ema
     end
 
 
@@ -100,9 +122,9 @@ module Analytica
       when :linear
         d.linear_mean(:bias => :last, :samples => d.size)
       when :exponential
-        enforce_exists!(:cofficient, params)
-        enforce!(:numeric, params[:cofficient])
-        d.exponential_mean(:bias => :last, :samples => d.size, :coefficient => params[:cofficient])
+        enforce_exists!(:alpha, params)
+        enforce!(:numeric, params[:alpha])
+        d.exponential_mean(:bias => :first, :samples => d.size, :alpha => params[:alpha])
       end
     end
 
@@ -123,7 +145,7 @@ module Analytica
 
       d = DataSet.new
       (1..params[:samples]).each do |offset|
-        d << average_filter(:decay => params[:decay], :cofficient => params[:cofficient], :offset => offset+params[:samples]-1, :samples => params[:samples])
+        d << average_filter(:decay => params[:decay], :alpha => params[:alpha], :offset => offset+params[:samples]-1, :samples => params[:samples])
       end
       d.reverse
     end
@@ -147,9 +169,9 @@ module Analytica
     def exponential_moving_average(params)
       enforce_map!({
         :samples => :integer,
-        :coefficent => :float}, params)
+        :alpha=> :float}, params)
 
-        moving_average(:decay => :exponential, :samples => params[:samples], :cofficient => params[:cofficient])
+        moving_average(:decay => :exponential, :samples => params[:samples], :alpha => params[:alpha])
     end
 
     alias_method :ema, :exponential_moving_average
