@@ -1,5 +1,4 @@
 require 'typestrict'
-
 require 'gchart'
 
 class GChart::Base

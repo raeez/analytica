@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), 'analytica_comp')
 require File.join(File.dirname(__FILE__), 'analytica_viz')
 
 module Analytica
-  VERSION = '0.0.6'
+  VERSION = '0.0.7'
 
   include Strict
 
@@ -21,6 +21,16 @@ module Analytica
     def <<(object)
       enforce!(:numeric, object)
       super object
+    end
+
+    def concat(other)
+      enforce!(:numeric_array, other)
+      super other
+    end
+
+    def +(other)
+      enforce!(:numeric_array, other)
+      super other
     end
   end
 end
