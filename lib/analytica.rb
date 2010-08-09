@@ -1,7 +1,7 @@
 require 'typestrict'
 
-require File.join(File.dirname(__FILE__), 'analytica_comp')
-require File.join(File.dirname(__FILE__), 'analytica_viz')
+require File.join(File.dirname(__FILE__), 'computation')
+require File.join(File.dirname(__FILE__), 'visualization')
 
 module Analytica
   VERSION = '0.0.7'
@@ -9,8 +9,8 @@ module Analytica
   include Strict
 
   class DataSet < Array
-    include Computation
-    include Visualization
+    include Analytica::Computation
+    include Analytica::Visualization
 
     def initialize(datapoints=[])
       enforce!(:numeric_array, datapoints)

@@ -1,3 +1,10 @@
+=== 0.0.7 / 2010-08-09
+* 3 enhancements
+
+  * Cleaned up structure of analytica package
+  * Analytica::DataSet now has a default constructor (empty DataSet) + type-safety on 'concat' and '+'
+  * Implemented moving_average, lma, sma and ema + approprate sub-computations
+
 === 0.0.5 / 2010-08-03
 
 * 3 enhancements
