@@ -1,3 +1,10 @@
+=== 0.0.9 / 2010-08-09
+
+* 2 enhancements
+
+  * Introduced Analytica::DataSystem collection of Analytica::DataSet objects
+  * Ported graphing over to 'googlecharts' 1.6.0
+
 === 0.0.7 / 2010-08-09
 * 3 enhancements
 

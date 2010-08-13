@@ -1,6 +1,6 @@
 require 'rubygems'
 gem 'hoe', '>= 2.0.0'
-gem 'typestrict', '>= 0.0.4'
+gem 'typestrict', '>= 0.0.10'
 require 'hoe'
 require 'typestrict'
 require 'lib/analytica'
