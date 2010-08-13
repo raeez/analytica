@@ -4,16 +4,26 @@ require File.join(File.dirname(__FILE__), 'computation')
 require File.join(File.dirname(__FILE__), 'visualization')
 
 module Analytica
-  VERSION = '0.0.7'
+  VERSION = '0.0.8'
 
   include Strict
 
+  dataset_array_handler = proc do |data, context|
+    enforce_primitive!(Array, data, context)
+    data.each {|item| enforce_primitive!(DataSet, item, context)}
+  end
+
+  register_supertype(:dataset_array, dataset_array_handler)
+
   class DataSet < Array
     include Analytica::Computation
-    include Analytica::Visualization
+    include Analytica::Visualization::DataSet
 
     def initialize(datapoints=[])
       enforce!(:numeric_array, datapoints)
+
+      @labels = []
+      @labels_set = false
 
       super datapoints
     end
@@ -30,6 +40,34 @@ module Analytica
 
     def +(other)
       enforce!(:numeric_array, other)
+      super other
+    end
+  end
+
+  class DataSystem < Array
+    include Analytica::Visualization::DataSystem
+
+    def initialize(datasets=[])
+      enforce!(:dataset_array, datasets)
+
+      super datasets
+    end
+
+    def <<(object)
+      enforce_primitive!(DataSet, object)
+
+      super object
+    end
+
+    def concat(other)
+      enforce!(:dataset_array, other)
+
+      super datasets
+    end
+
+    def +(other)
+      enforce!(:dataset_array, other)
+
       super other
     end
   end
