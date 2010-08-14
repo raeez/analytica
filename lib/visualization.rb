@@ -1,9 +1,9 @@
-require 'typestrict'
 require 'googlecharts'
+require 'typestrict'
 
 module Analytica
   module Visualization
-    def default_bar_settings
+    def self.default_bar_settings
       {:width => 25, :spacing => 10, :group_spacing => 12}
     end
 
