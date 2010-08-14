@@ -224,6 +224,8 @@ module Analytica
           :axis_labels => [[],[]] # TODO
         }
 
+        options.merge!(label)
+
         Gchart.line(options)
       end
 
