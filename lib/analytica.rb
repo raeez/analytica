@@ -24,6 +24,7 @@ module Analytica
 
   class DataSet < Array
     include Analytica::Computation
+    include Analytica::Visualization::Common
     include Analytica::Visualization::DataSet
 
     def initialize(datapoints=[])
@@ -52,6 +53,7 @@ module Analytica
   end
 
   class DataSystem < Array
+    include Analytica::Visualization::Common
     include Analytica::Visualization::DataSystem
 
     def initialize(datasets=[])

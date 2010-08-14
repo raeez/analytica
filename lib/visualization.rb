@@ -7,7 +7,7 @@ module Analytica
       {:width => 25, :spacing => 10, :group_spacing => 12}
     end
 
-    module VizCommon
+    module Common
       def set_title(params)
         enforce_map!({
           :title => :string,
@@ -23,8 +23,8 @@ module Analytica
 
         if @labels_set
           label = {
-            :axis_with_labels => ['x', 'y' ,'r'],
-            :axis_labels => @labels
+            :axis_with_labels => ['x', 'y'],
+            :axis_labels => [@labels, ["#{0}", "#{(datamax*0.25).to_i}", "#{(datamax*0.5).to_i}", "#{(datamax*0.75).to_i}", "#{datamax.to_i}"]]
           }
 
           options.merge!(label)
