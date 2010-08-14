@@ -171,7 +171,7 @@ module Analytica
         :samples => :integer,
         :alpha => :float}, params)
 
-        moving_average(:decay => :exponential, :samples => self.size, :alpha => params[:alpha])
+        moving_average(:decay => :exponential, :samples => params[:samples], :alpha => params[:alpha])
     end
 
     alias_method :ema, :exponential_moving_average
