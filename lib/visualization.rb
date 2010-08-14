@@ -218,13 +218,14 @@ module Analytica
 
         options.merge!(color)
 
-        label = {
-          :legend => ['x', 'y'], # TODO number of datasets
-          :axis_with_labels => ['x','r'], #TODO number of datasets
-          :axis_labels => [[],[]] # TODO
-        }
+        if @labels_set
+          label = {
+            :axis_with_labels => ['x', 'y' ,'r'],
+            :axis_labels => @labels
+          }
 
-        options.merge!(label)
+          options.merge!(label)
+        end
 
         Gchart.line(options)
       end
