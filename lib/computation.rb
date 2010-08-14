@@ -32,7 +32,7 @@ module Analytica
       sum.to_f / size
     end
 
-    def linear_mean(params)
+    def linear_mean(params={})
       enforce_map!({
         :bias => [:last, :first],
         :samples => :natural_number}, params)
@@ -56,7 +56,7 @@ module Analytica
       numerator / denominator
     end
 
-    def exponential_mean(params)
+    def exponential_mean(params={})
       enforce_map!({
         :bias => [:last, :first],
         :alpha => :numeric,
@@ -89,7 +89,7 @@ module Analytica
     end
 
 
-    def average_filter(params)
+    def average_filter(params={})
       enforce_map!({
         :decay => [:simple, :linear, :exponential],
         :offset => :natural_number, # offset from latest data point
@@ -130,7 +130,7 @@ module Analytica
 
     alias_method(:avg, :average_filter)
 
-    def moving_average(params)
+    def moving_average(params={})
       enforce_map!({
         :decay => [:simple, :linear, :exponential],
         :samples => :natural_number}, params)
@@ -150,7 +150,7 @@ module Analytica
       d.reverse
     end
 
-    def simple_moving_average(params)
+    def simple_moving_average(params={})
       enforce_map!({
         :samples => :natural_number}, params)
       moving_average(:decay => :simple, :samples => params[:samples])
@@ -158,7 +158,7 @@ module Analytica
 
     alias_method :sma, :simple_moving_average
 
-    def linear_moving_average(params)
+    def linear_moving_average(params={})
       enforce_map!({
         :samples => :natural_number}, params)
       moving_average(:decay => :linear, :samples => params[:samples])
@@ -166,7 +166,7 @@ module Analytica
 
     alias_method :lma, :linear_moving_average
 
-    def exponential_moving_average(params)
+    def exponential_moving_average(params={})
       enforce_map!({
         :samples => :integer,
         :alpha => :float}, params)

@@ -7,6 +7,37 @@ module Analytica
       {:width => 25, :spacing => 10, :group_spacing => 12}
     end
 
+    module VizCommon
+      def set_title(params)
+        enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color}, params)
+
+        @title = params
+        @title_set = true
+      end
+
+      def common_options
+        options = {}
+
+        if @labels_set
+          label = {
+            :axis_with_labels => ['x', 'y' ,'r'],
+            :axis_labels => @labels
+          }
+
+          options.merge!(label)
+        end
+
+        if @title_set
+          options.merge!(@title)
+        end
+
+        options
+      end
+    end
+
     module DataSet
       include Strict
 
@@ -21,7 +52,7 @@ module Analytica
       (max > 0) ? (1.25*max) : 1
       end
 
-      def to_linegraph(params)
+      def to_linegraph(params={})
         enforce_map!({
           :width => :natural_number,
           :height => :natural_number,
@@ -44,14 +75,6 @@ module Analytica
 
         options.merge!(base)
 
-        title = {
-          :title => params[:title],
-          :title_color => params[:title_color],
-          :title_size => params[:title_size]
-        }
-
-        #options.merge!(title)
-
         color = {
           :line_colors => params[:color],
           :background => params[:background_color],
@@ -60,19 +83,12 @@ module Analytica
 
         options.merge!(color)
 
-        label = {
-          :legend => ['x', 'y'], # TODO number of datasets
-          :axis_with_labels => ['x','r'], #TODO number of datasets
-          :axis_labels => [[],[]] # TODO
-        }
-        
-        
-        #options.merge!(label)
+        options.merge!(common_options)
 
         Gchart.line(options)
       end
 
-      def to_sparkline(params)
+      def to_sparkline(params={})
         enforce_map!({
           :width => :natural_number,
           :height => :natural_number,
@@ -95,14 +111,6 @@ module Analytica
 
         options.merge!(base)
 
-        title = {
-          :title => params[:title],
-          :title_color => params[:title_color],
-          :title_size => params[:title_size]
-        }
-
-        #options.merge!(title)
-
         color = {
           :line_colors => params[:color],
           :background => params[:background_color],
@@ -111,19 +119,13 @@ module Analytica
 
         options.merge!(color)
 
-        label = {
-          :legend => ['x', 'y'], # TODO number of datasets
-          :axis_with_labels => ['x','r'], #TODO number of datasets
-          :axis_labels => [[],[]] # TODO
-        }
-        
-        #options.merge!(label)
+        options.merge!(common_options)
 
         Gchart.sparkline(options)
       end
 
 
-      def to_bargraph(params)
+      def to_bargraph(params={})
         enforce_map!({
           :width => :natural_number,
           :height => :natural_number,
@@ -145,14 +147,6 @@ module Analytica
 
         options.merge!(base)
 
-        title = {
-          :title => params[:title],
-          :title_color => params[:title_color],
-          :title_size => params[:title_size]
-        }
-
-        #options.merge!(title)
-
         color = {
           :bar_colors => params[:color],
           :background => params[:background_color],
@@ -161,25 +155,26 @@ module Analytica
 
         options.merge!(color)
 
-        label = {
-          :legend => ['x', 'y'], # TODO number of datasets
-          :axis_with_labels => ['x','r'], #TODO number of datasets
-          :axis_labels => [[],[]] # TODO
-        }
-
-        #options.merge!(label)
-
+        options.merge!(common_options)
 
         return Gchart.bar(options)
       end
     end
 
     module DataSystem
+
+      def set_labels(labels)
+      enforce!(:string_array_2d, labels)
+
+        @labels = labels
+        @labels_set = true
+      end
+
       def datamax
         (self.map{|dset| dset.datamax}).max
       end
 
-      def to_linegraph(params)
+      def to_linegraph(params={})
         enforce_map!({
           :width => :natural_number,
           :height => :natural_number,
@@ -202,14 +197,6 @@ module Analytica
 
         options.merge!(base)
 
-        title = {
-          :title => params[:title],
-          :title_color => params[:title_color],
-          :title_size => params[:title_size]
-        }
-
-        #options.merge!(title)
-
         color = {
           :line_colors => params[:colors],
           :background => params[:background_color],
@@ -218,19 +205,12 @@ module Analytica
 
         options.merge!(color)
 
-        if @labels_set
-          label = {
-            :axis_with_labels => ['x', 'y' ,'r'],
-            :axis_labels => @labels
-          }
-
-          options.merge!(label)
-        end
+        options.merge!(common_options)
 
         Gchart.line(options)
       end
 
-      def to_bargraph(params)
+      def to_bargraph(params={})
         enforce_map!({
           :width => :natural_number,
           :height => :natural_number,
@@ -253,14 +233,6 @@ module Analytica
 
         options.merge!(base)
 
-        title = {
-          :title => params[:title],
-          :title_color => params[:title_color],
-          :title_size => params[:title_size]
-        }
-
-        #options.merge!(title)
-
         color = {
           :bar_colors => params[:colors],
           :background => params[:background_color],
@@ -269,14 +241,7 @@ module Analytica
 
         options.merge!(color)
 
-        label = {
-          :legend => ['x', 'y'], # TODO number of datasets
-          :axis_with_labels => ['x','r'], #TODO number of datasets
-          :axis_labels => [[],[]] # TODO
-        }
-
-        #options.merge!(label)
-
+        options.merge!(common_options)
 
         return Gchart.bar(options)
       end

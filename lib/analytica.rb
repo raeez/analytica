@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), 'computation')
 require File.join(File.dirname(__FILE__), 'visualization')
 
 module Analytica
-  VERSION = '0.0.12'
+  VERSION = '0.0.13'
 
   include Strict
 
@@ -14,6 +14,13 @@ module Analytica
   end
 
   register_supertype(:dataset_array, dataset_array_handler)
+
+  string_array_2d_handler = proc do |data, context|
+    enforce_primitive!(Array, data, context)
+    data.each {|item| enforce!(:string_array, item, context)}
+  end
+
+  register_supertype(:string_array_2d, string_array_2d_handler)
 
   class DataSet < Array
     include Analytica::Computation
@@ -49,6 +56,9 @@ module Analytica
 
     def initialize(datasets=[])
       enforce!(:dataset_array, datasets)
+
+      @labels = []
+      @labels_set = false
 
       super datasets
     end
