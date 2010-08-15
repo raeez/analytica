@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), 'computation')
 require File.join(File.dirname(__FILE__), 'visualization')
 
 module Analytica
-  VERSION = '0.0.13'
+  VERSION = '0.0.14'
 
   include Strict
 
