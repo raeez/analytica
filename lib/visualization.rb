@@ -42,7 +42,7 @@ module Analytica
       include Strict
 
       def set_labels(labels)
-      enforce!(:string_array, labels)
+        enforce!(:string_array, labels)
 
         @labels = labels
         @labels_set = true
@@ -164,7 +164,7 @@ module Analytica
     module DataSystem
 
       def set_labels(labels)
-      enforce!(:string_array_2d, labels)
+        enforce!(:string_array, labels)
 
         @labels = labels
         @labels_set = true
