@@ -20,7 +20,7 @@ module Analytica
         if @labels_set
           label = {
             :axis_with_labels => ['x', 'y'],
-            :axis_labels => [@labels, ["#{0}", "#{(datamax*0.25).to_i}", "#{(datamax*0.5).to_i}", "#{(datamax*0.75).to_i}", "#{datamax.to_i}"]]
+            :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
           }
 
           options.merge!(label)
@@ -37,11 +37,33 @@ module Analytica
     module DataSet
       include Strict
 
-      def set_labels(labels)
-        enforce!(:string_array, labels)
+      def set_labels(data, params={})
+        enforce_map_defaults!({
+          :type => :axis,
+          :prefix => ' ',
+          :postfix => ' ',
+          :decimal => 0,
+          :color => '000000',
+          :size => 10}, params)
 
-        @labels = labels
+        enforce_map!({
+          :type => [:axis, :data],
+          :prefix => :string,
+          :decimal => :integer,
+          :color => :hex_color,
+          :size => :natural_number}, params)
+
         @labels_set = true
+
+        @labels = {} if @labels.nil?
+        @labels[params[:type]] = {}
+
+        @labels[params[:type]][:prefix] = params[:prefix] == ' ' ? '' : params[:prefix]
+        @labels[params[:type]][:postfix] = params[:postfix] == ' ' ? '' : params[:postfix]
+        @labels[params[:type]][:decimal]  = params[:decimal]
+        @labels[params[:type]][:color] = params[:color]
+        @labels[params[:type]][:size] = params[:size]
+        @labels[params[:type]][:data] = data
       end
 
       def bar_settings(bar_settings)
@@ -157,8 +179,8 @@ module Analytica
           :title_size => 12,
           :title_color => '000000',
           :orientation => :vertical,
-          :color => 'ffffff',
-          :background_color => '000000',
+          :color => '00bb00',
+          :background_color => 'ffffff',
           :stacked => false,
           :width => 600,
           :height => 280,
@@ -197,9 +219,30 @@ module Analytica
         }
 
         options.merge!(color)
-
-        options.merge!(common_options)
         
+        if @labels_set
+
+          if @labels[:data]
+            data_labels = {
+              :custom => "chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}&amp;chd"
+            }
+            options.merge!(data_labels)
+          end
+
+          if @labels[:axis]
+            puts "doing the axis labels thing #{@labels[:axis][:data]}"
+            axis_labels = {
+              :axis_with_labels => ['x', 'y'],
+              :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
+            }
+
+            options.merge!(axis_labels)
+          end
+        end
+
+        if @title_set
+          options.merge!(@title)
+        end
         return Gchart.bar(options)
       end
     end
@@ -214,11 +257,8 @@ module Analytica
         bar_settings
       end
 
-      def set_labels(labels)
-        enforce!(:string_array, labels)
-
-        @labels = labels
-        @labels_set = true
+      def set_labels(data, params={})
+        # TODO implement
       end
 
       def datamax
