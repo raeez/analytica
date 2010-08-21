@@ -3,10 +3,6 @@ require 'typestrict'
 
 module Analytica
   module Visualization
-    def self.default_bar_settings
-      {:width => 25, :spacing => 10, :group_spacing => 12}
-    end
-
     module Common
       def set_title(params)
         enforce_map!({
@@ -48,20 +44,37 @@ module Analytica
         @labels_set = true
       end
 
+      def bar_settings(bar_settings)
+        enforce_map_optional!({
+          :width => :natural_number,
+          :spacing => :natural_number,
+          :group_spacing => :natural_number}, bar_settings)
+        bar_settings
+      end
+
       def datamax
       (max > 0) ? (1.25*max) : 1
       end
 
       def to_linegraph(params={})
+        enforce_map_defaults!({
+          :title => ' ',
+          :title_size => 12,
+          :title_color => '000000',
+          :color => 'ffffff',
+          :background_color => '000000',
+          :width => 600,
+          :height => 280,
+          :bar_settings => {}}, params)
+
         enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color,
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
           :color => :hex_color}, params)
-
-        params[:title] = '' unless params.has_key? :title
-        params[:title_size] = 12 unless params.has_key? :title_size
-        params[:title_color] = '000000' unless params.has_key? :title_color
 
 
         options = {}
@@ -89,7 +102,20 @@ module Analytica
       end
 
       def to_sparkline(params={})
+        enforce_map_defaults!({
+          :title => ' ',
+          :title_size => 12,
+          :title_color => '000000',
+          :color => '0000ff',
+          :background_color => 'ffffff',
+          :width => 600,
+          :height => 280,
+          :bar_settings => {}}, params)
+
         enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color,
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
@@ -126,12 +152,29 @@ module Analytica
 
 
       def to_bargraph(params={})
+        enforce_map_defaults!({
+          :title => ' ',
+          :title_size => 12,
+          :title_color => '000000',
+          :orientation => :vertical,
+          :color => 'ffffff',
+          :background_color => '000000',
+          :stacked => false,
+          :width => 600,
+          :height => 280,
+          :bar_settings => {}}, params)
+
         enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color,
           :width => :natural_number,
           :height => :natural_number,
           :orientation => [:vertical, :horizontal],
+          :stacked => :boolean,
           :background_color => :hex_color,
-          :color => :hex_color}, params)
+          :color => :hex_color,
+          :bar_settings => :hash_map}, params)
 
         options = {}
 
@@ -141,7 +184,7 @@ module Analytica
           :size => "#{params[:width]}x#{params[:height]}",
           :orientation => params[:orientation].to_s,
           :stacked => params[:stacked],
-          :bar_width_and_spacing => Analytica::Visualization::default_bar_settings,
+          :bar_width_and_spacing => bar_settings(params[:bar_settings]),
           :format => 'image_tag'
         }
 
@@ -156,12 +199,20 @@ module Analytica
         options.merge!(color)
 
         options.merge!(common_options)
-
+        
         return Gchart.bar(options)
       end
     end
 
     module DataSystem
+
+      def bar_settings(bar_settings)
+        enforce_map_optional!({
+          :width => :natural_number,
+          :spacing => :natural_number,
+          :group_spacing => :natural_number}, bar_settings)
+        bar_settings
+      end
 
       def set_labels(labels)
         enforce!(:string_array, labels)
@@ -175,16 +226,24 @@ module Analytica
       end
 
       def to_linegraph(params={})
+        enforce_map_defaults!({
+          :title => ' ',
+          :title_size => 12,
+          :title_color => '000000',
+          :color => 'ffffff',
+          :width => 600,
+          :height => 280,
+          :background_color => '000000'}, params)
+
+
         enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color,
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
-          :colors => :hex_color_array}, params)
-
-        params[:title] = '' unless params.has_key? :title
-        params[:title_size] = 12 unless params.has_key? :title_size
-        params[:title_color] = '000000' unless params.has_key? :title_color
-
+          :color => :hex_color}, params)
 
         options = {}
 
@@ -211,13 +270,28 @@ module Analytica
       end
 
       def to_bargraph(params={})
+        enforce_map_defaults!({
+          :title => ' ',
+          :title_size => 12,
+          :title_color => '000000',
+          :orientation => :vertical,
+          :color => 'ffffff',
+          :background_color => '000000',
+          :width => 600,
+          :height => 280,
+          :bar_settings => {}}, params)
+
         enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color,
           :width => :natural_number,
           :height => :natural_number,
           :orientation => [:vertical, :horizontal],
           :stacked => :boolean,
           :background_color => :hex_color,
-          :colors => :hex_color_array}, params)
+          :colors => :hex_color_array,
+          :bar_settings => :hash_map}, params)
 
         options = {}
 
@@ -227,7 +301,7 @@ module Analytica
           :size => "#{params[:width]}x#{params[:height]}",
           :orientation => params[:orientation].to_s,
           :stacked => params[:stacked],
-          :bar_width_and_spacing => Analytica::Visualization::default_bar_settings,
+          :bar_width_and_spacing => bar_settings(params[:bar_settings]),
           :format => 'image_tag'
         }
 
