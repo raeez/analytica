@@ -3,40 +3,8 @@ require 'typestrict'
 
 module Analytica
   module Visualization
+
     module Common
-      def set_title(params)
-        enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color}, params)
-
-        @title = params
-        @title_set = true
-      end
-
-      def common_options
-        options = {}
-
-        if @labels_set
-          label = {
-            :axis_with_labels => ['x', 'y'],
-            :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
-          }
-
-          options.merge!(label)
-        end
-
-        if @title_set
-          options.merge!(@title)
-        end
-
-        options
-      end
-    end
-
-    module DataSet
-      include Strict
-
       def set_labels(data, params={})
         enforce_map_defaults!({
           :type => :axis,
@@ -66,6 +34,16 @@ module Analytica
         @labels[params[:type]][:data] = data
       end
 
+      def set_title(params)
+        enforce_map!({
+          :title => :string,
+          :title_size => :natural_number,
+          :title_color => :hex_color}, params)
+
+        @title = params
+        @title_set = true
+      end
+
       def bar_settings(bar_settings)
         enforce_map_optional!({
           :width => :natural_number,
@@ -73,6 +51,48 @@ module Analytica
           :group_spacing => :natural_number}, bar_settings)
         bar_settings
       end
+
+      def generate_title
+        options = {}
+        if @title_set
+          options.merge!(@title)
+        end
+        options
+      end
+
+      def generate_labels
+        options = {}
+        if @labels_set
+          if @labels[:data]
+            @labels[:data][:data].each {|element| data_string += ",#{element.to_f}"}
+            data_labels = {
+              :custom => "chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}&amp;chds=0,#{datamax}"
+            }
+            options.merge!(data_labels)
+          end
+
+          if @labels[:axis]
+            axis_labels = {
+              :axis_with_labels => ['x', 'y'],
+              :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
+            }
+            options.merge!(axis_labels)
+          end
+        end
+        puts "ended with label settings => #{options.inspect}"
+        options
+      end
+
+      def common_options
+        options = {}
+        options.merge!(generate_labels)
+        options.merge!(generate_title)
+        options
+      end
+    end
+
+    module DataSet
+      include Strict
 
       def datamax
       (max > 0) ? (1.25*max) : 1
@@ -131,7 +151,7 @@ module Analytica
           :color => '0000ff',
           :background_color => 'ffffff',
           :width => 600,
-          :height => 280,
+          :height => 180,
           :bar_settings => {}}, params)
 
         enforce_map!({
@@ -184,6 +204,7 @@ module Analytica
           :stacked => false,
           :width => 600,
           :height => 280,
+          :stacked => false,
           :bar_settings => {}}, params)
 
         enforce_map!({
@@ -219,50 +240,14 @@ module Analytica
         }
 
         options.merge!(color)
+
+        options.merge!(common_options)
         
-        if @labels_set
-
-          if @labels[:data]
-            data_string = ""
-            @labels[:data][:data].each {|element| data_string += ",#{element.to_f}"}
-            data_string = data_string[1..data_string.size]
-            data_labels = {
-              :custom => "chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}&amp;chds=0,#{datamax}"
-            }
-            options.merge!(data_labels)
-          end
-
-          if @labels[:axis]
-            puts "doing the axis labels thing #{@labels[:axis][:data]}"
-            axis_labels = {
-              :axis_with_labels => ['x', 'y'],
-              :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
-            }
-
-            options.merge!(axis_labels)
-          end
-        end
-
-        if @title_set
-          options.merge!(@title)
-        end
         return Gchart.bar(options)
       end
     end
 
     module DataSystem
-
-      def bar_settings(bar_settings)
-        enforce_map_optional!({
-          :width => :natural_number,
-          :spacing => :natural_number,
-          :group_spacing => :natural_number}, bar_settings)
-        bar_settings
-      end
-
-      def set_labels(data, params={})
-        # TODO implement
-      end
 
       def datamax
         (self.map{|dset| dset.datamax}).max
@@ -322,6 +307,7 @@ module Analytica
           :background_color => '000000',
           :width => 600,
           :height => 280,
+          :stacked => false,
           :bar_settings => {}}, params)
 
         enforce_map!({
