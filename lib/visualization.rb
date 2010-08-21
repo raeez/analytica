@@ -227,7 +227,7 @@ module Analytica
             @labels[:data][:data].each {|element| data_string += ",#{element.to_f}"}
             data_string = data_string[1..data_string.size]
             data_labels = {
-              :custom => "chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}&amp;chd=t_:"+data_string
+              :custom => "chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}"
             }
             options.merge!(data_labels)
           end
