@@ -39,9 +39,9 @@ module Analytica
 
       def set_title(params)
         enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color}, params)
+          :text => :string,
+          :size => :natural_number,
+          :color => :hex_color}, params)
 
         @title = params
         @title_set = true
@@ -58,7 +58,7 @@ module Analytica
       def generate_title
         options = {}
         if @title_set
-          options.merge!(@title)
+          options.merge!({:title => @title[:text], :title_size => @title[:size], :title_color => @title[:color]})
         end
         options
       end
@@ -114,9 +114,7 @@ module Analytica
 
       def to_linegraph(params={})
         enforce_map_defaults!({
-          :title => ' ',
-          :title_size => 12,
-          :title_color => '000000',
+          :title => {:text => ' ', :color => "000000", :size => 12},
           :color => 'ffffff',
           :background_color => '000000',
           :width => 600,
@@ -124,9 +122,7 @@ module Analytica
           :bar_settings => {}}, params)
 
         enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color,
+          :title => :hash_map,
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
@@ -159,9 +155,7 @@ module Analytica
 
       def to_sparkline(params={})
         enforce_map_defaults!({
-          :title => ' ',
-          :title_size => 12,
-          :title_color => '000000',
+          :title => {:text => ' ', :color => "000000", :size => 12},
           :color => '0000ff',
           :background_color => 'ffffff',
           :width => 600,
@@ -169,9 +163,7 @@ module Analytica
           :bar_settings => {}}, params)
 
         enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color,
+          :title => :hash_map,
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
@@ -209,9 +201,7 @@ module Analytica
 
       def to_bargraph(params={})
         enforce_map_defaults!({
-          :title => ' ',
-          :title_size => 12,
-          :title_color => '000000',
+          :title => {:text => ' ', :color => "000000", :size => 12},
           :orientation => :vertical,
           :color => '00bb00',
           :background_color => 'ffffff',
@@ -222,9 +212,7 @@ module Analytica
           :bar_settings => {}}, params)
 
         enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color,
+          :title => :hash_map,
           :width => :natural_number,
           :height => :natural_number,
           :orientation => [:vertical, :horizontal],
@@ -269,9 +257,7 @@ module Analytica
 
       def to_linegraph(params={})
         enforce_map_defaults!({
-          :title => ' ',
-          :title_size => 12,
-          :title_color => '000000',
+          :title => {:text => ' ', :color => "000000", :size => 12},
           :color => 'ffffff',
           :width => 600,
           :height => 280,
@@ -279,9 +265,7 @@ module Analytica
 
 
         enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color,
+          :title => :hash_map,
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
@@ -313,9 +297,7 @@ module Analytica
 
       def to_bargraph(params={})
         enforce_map_defaults!({
-          :title => ' ',
-          :title_size => 12,
-          :title_color => '000000',
+          :title => {:text => ' ', :color => "000000", :size => 12},
           :orientation => :vertical,
           :color => 'ffffff',
           :background_color => '000000',
@@ -325,9 +307,7 @@ module Analytica
           :bar_settings => {}}, params)
 
         enforce_map!({
-          :title => :string,
-          :title_size => :natural_number,
-          :title_color => :hex_color,
+          :title => :hash_map,
           :width => :natural_number,
           :height => :natural_number,
           :orientation => [:vertical, :horizontal],
