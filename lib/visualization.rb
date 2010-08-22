@@ -7,7 +7,7 @@ module Analytica
     module Representation
       def set_labels(params={})
         enforce_map_defaults!({
-          :data => nil,
+          :data => [],
           :type => :x_axis,
           :prefix => ' ',
           :postfix => ' ',
@@ -15,7 +15,7 @@ module Analytica
           :color => '000000',
           :size => 10}, params)
 
-        enforce_weak_primitives!([Array, NilClass], params[:data])
+        enforce_primitive!(Array, params[:data])
 
         enforce_map!({
           :type => [:axis, :x_axis, :y_axis, :data],
@@ -83,13 +83,13 @@ module Analytica
           elsif @labels[:x_axis]
             x_axis_label = {
               :axis_with_labels => 'x',
-              :axis_labels => @labels[:x_axis][:data].nil? ? self.map{|n|"#{n}"} : @labels[:x_axis][:data]
+              :axis_labels => @labels[:x_axis][:data].size == 0 ? self.map{|n|"#{n}"} : @labels[:x_axis][:data]
             }
             options.merge!(x_axis_label)
           elsif @labels[:y_axis]
             y_axis_label = {
               :axis_with_labels => 'y',
-              :axis_labels => @labels[:y_axis][:data].nil? ? ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"] : @labels[:y_axis][:data]
+              :axis_labels => @labels[:y_axis][:data].size == 0 ? ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"] : @labels[:y_axis][:data]
             }
             options.merge!(y_axis_label)
           end
