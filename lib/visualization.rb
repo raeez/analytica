@@ -38,6 +38,10 @@ module Analytica
       end
 
       def set_title(params)
+        enforce_map_defaults!({
+          :text => ' ',
+          :size => 11,
+          :color => "000000"}, params)
         enforce_map!({
           :text => :string,
           :size => :natural_number,
@@ -130,6 +134,7 @@ module Analytica
           :format => [:url, :image_tag],
           :color => :hex_color}, params)
 
+        set_title(params[:title])
 
         options = {}
 
@@ -174,10 +179,7 @@ module Analytica
           :format => [:url, :image_tag],
           :color => :hex_color}, params)
 
-        params[:title] = '' unless params.has_key? :title
-        params[:title_size] = 12 unless params.has_key? :title_size
-        params[:title_color] = '000000' unless params.has_key? :title_color
-
+        set_title(params[:title])
 
         options = {}
 
@@ -228,6 +230,8 @@ module Analytica
           :color => :hex_color,
           :format => [:url, :image_tag],
           :bar_settings => :hash_map}, params)
+        
+        set_title(params[:title])
 
         options = {}
 
@@ -281,6 +285,8 @@ module Analytica
           :format => [:url, :image_tag],
           :color => :hex_color}, params)
 
+        set_title(params[:title])
+
         options = {}
 
         options.merge!({:format => 'image_tag'}) if params[:format] == :image_tag
@@ -328,6 +334,8 @@ module Analytica
           :colors => :hex_color_array,
           :format => [:url, :image_tag],
           :bar_settings => :hash_map}, params)
+
+        set_title(params[:title])
 
         options = {}
 
