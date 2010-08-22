@@ -121,6 +121,7 @@ module Analytica
           :background_color => '000000',
           :width => 600,
           :height => 280,
+          :format => :image_tag,
           :bar_settings => {}}, params)
 
         enforce_map!({
@@ -130,16 +131,18 @@ module Analytica
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
+          :format => [:url, :image_tag],
           :color => :hex_color}, params)
 
 
         options = {}
 
+        options.merge!({:format => 'image_tag'}) if params[:format] == :image_tag
+
         base = {
           :data => self,
           :max_value => datamax,
-          :size => "#{params[:width]}x#{params[:height]}",
-          :format => 'image_tag'
+          :size => "#{params[:width]}x#{params[:height]}"
         }
 
         options.merge!(base)
@@ -166,6 +169,7 @@ module Analytica
           :background_color => 'ffffff',
           :width => 600,
           :height => 180,
+          :format => :image_tag,
           :bar_settings => {}}, params)
 
         enforce_map!({
@@ -175,6 +179,7 @@ module Analytica
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
+          :format => [:url, :image_tag],
           :color => :hex_color}, params)
 
         params[:title] = '' unless params.has_key? :title
@@ -184,11 +189,12 @@ module Analytica
 
         options = {}
 
+        options.merge!({:format => 'image_tag'}) if params[:format] == :image_tag
+
         base = {
           :data => self,
           :max_value => datamax,
-          :size => "#{params[:width]}x#{params[:height]}",
-          :format => 'image_tag'
+          :size => "#{params[:width]}x#{params[:height]}"
         }
 
         options.merge!(base)
@@ -219,6 +225,7 @@ module Analytica
           :width => 600,
           :height => 280,
           :stacked => false,
+          :format => :image_tag,
           :bar_settings => {}}, params)
 
         enforce_map!({
@@ -231,9 +238,12 @@ module Analytica
           :stacked => :boolean,
           :background_color => :hex_color,
           :color => :hex_color,
+          :format => [:url, :image_tag],
           :bar_settings => :hash_map}, params)
 
         options = {}
+
+        options.merge!({:format => 'image_tag'}) if params[:format] == :image_tag
 
         base = {
           :data => self,
@@ -241,8 +251,7 @@ module Analytica
           :size => "#{params[:width]}x#{params[:height]}",
           :orientation => params[:orientation].to_s,
           :stacked => params[:stacked],
-          :bar_width_and_spacing => bar_settings(params[:bar_settings]),
-          :format => 'image_tag'
+          :bar_width_and_spacing => bar_settings(params[:bar_settings])
         }
 
         options.merge!(base)
@@ -275,8 +284,8 @@ module Analytica
           :color => 'ffffff',
           :width => 600,
           :height => 280,
+          :format => :image_tag,
           :background_color => '000000'}, params)
-
 
         enforce_map!({
           :title => :string,
@@ -285,15 +294,17 @@ module Analytica
           :width => :natural_number,
           :height => :natural_number,
           :background_color => :hex_color,
+          :format => [:url, :image_tag],
           :color => :hex_color}, params)
 
         options = {}
 
+        options.merge!({:format => 'image_tag'}) if params[:format] == :image_tag
+
         base = {
           :data => self,
           :max_value => datamax,
-          :size => "#{params[:width]}x#{params[:height]}",
-          :format => 'image_tag'
+          :size => "#{params[:width]}x#{params[:height]}"
         }
 
         options.merge!(base)
@@ -322,6 +333,7 @@ module Analytica
           :width => 600,
           :height => 280,
           :stacked => false,
+          :format => :image_tag,
           :bar_settings => {}}, params)
 
         enforce_map!({
@@ -334,9 +346,12 @@ module Analytica
           :stacked => :boolean,
           :background_color => :hex_color,
           :colors => :hex_color_array,
+          :format => [:url, :image_tag],
           :bar_settings => :hash_map}, params)
 
         options = {}
+
+        options.merge!({:format => 'image_tag'}) if params[:format] == :image_tag
 
         base = {
           :data => self,
@@ -344,8 +359,7 @@ module Analytica
           :size => "#{params[:width]}x#{params[:height]}",
           :orientation => params[:orientation].to_s,
           :stacked => params[:stacked],
-          :bar_width_and_spacing => bar_settings(params[:bar_settings]),
-          :format => 'image_tag'
+          :bar_width_and_spacing => bar_settings(params[:bar_settings])
         }
 
         options.merge!(base)
