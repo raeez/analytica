@@ -4,18 +4,21 @@ require 'typestrict'
 module Analytica
   module Visualization
 
-    module Common
-      def set_labels(data, params={})
+    module Representation
+      def set_labels(params={})
         enforce_map_defaults!({
-          :type => :axis,
+          :data => nil,
+          :type => :x_axis,
           :prefix => ' ',
           :postfix => ' ',
           :decimal => 0,
           :color => '000000',
           :size => 10}, params)
 
+        enforce_weak_primitives!([Array, NilClass], params[:data])
+
         enforce_map!({
-          :type => [:axis, :data],
+          :type => [:axis, :x_axis, :y_axis, :data],
           :prefix => :string,
           :decimal => :integer,
           :color => :hex_color,
@@ -31,7 +34,7 @@ module Analytica
         @labels[params[:type]][:decimal]  = params[:decimal]
         @labels[params[:type]][:color] = params[:color]
         @labels[params[:type]][:size] = params[:size]
-        @labels[params[:type]][:data] = data
+        @labels[params[:type]][:data] = params[:data]
       end
 
       def set_title(params)
@@ -77,9 +80,20 @@ module Analytica
               :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
             }
             options.merge!(axis_labels)
+          elsif @labels[:x_axis]
+            x_axis_label = {
+              :axis_with_labels => 'x',
+              :axis_labels => @labels[:x_axis][:data].nil? ? self.map{|n|"#{n}"} : @labels[:x_axis][:data]
+            }
+            options.merge!(x_axis_label)
+          elsif @labels[:y_axis]
+            y_axis_label = {
+              :axis_with_labels => 'y',
+              :axis_labels => @labels[:y_axis][:data].nil? ? ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"] : @labels[:y_axis][:data]
+            }
+            options.merge!(y_axis_label)
           end
         end
-        puts "ended with label settings => #{options.inspect}"
         options
       end
 
@@ -95,7 +109,7 @@ module Analytica
       include Strict
 
       def datamax
-      (max > 0) ? (1.25*max) : 1
+      (max > 0) ? (1.1*max) : 1
       end
 
       def to_linegraph(params={})

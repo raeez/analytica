@@ -24,7 +24,7 @@ module Analytica
 
   class DataSet < Array
     include Analytica::Computation
-    include Analytica::Visualization::Common
+    include Analytica::Visualization::Representation
     include Analytica::Visualization::DataSet
   
     attr_accessor :labels
@@ -55,7 +55,7 @@ module Analytica
   end
 
   class DataSystem < Array
-    include Analytica::Visualization::Common
+    include Analytica::Visualization::Representation
     include Analytica::Visualization::DataSystem
 
     attr_accessor :labels
