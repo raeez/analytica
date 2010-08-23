@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), 'computation')
 require File.join(File.dirname(__FILE__), 'visualization')
 
 module Analytica
-  VERSION = '0.0.20'
+  VERSION = '0.0.21'
 
   include Strict
 
@@ -31,6 +31,9 @@ module Analytica
 
     def initialize(datapoints=[])
       enforce!(:numeric_array, datapoints)
+      
+      @custom = ""
+      @custom_set = false
 
       @labels = {}
       @labels_set = false
@@ -62,6 +65,9 @@ module Analytica
 
     def initialize(datasets=[])
       enforce!(:dataset_array, datasets)
+
+      @custom = ""
+      @custom_set = false
 
       @labels = {}
       @labels_set = false

@@ -8,11 +8,13 @@ module Analytica
       def set_labels(params={})
         enforce_map_defaults!({
           :data => [],
-          :type => :x_axis,
+          :type => :axis,
+          :style => :axis_tick,
           :prefix => ' ',
           :postfix => ' ',
           :decimal => 0,
           :color => '000000',
+          :tick_color => "333333",
           :size => 10}, params)
 
         enforce_primitive!(Array, params[:data])
@@ -22,18 +24,21 @@ module Analytica
           :prefix => :string,
           :decimal => :integer,
           :color => :hex_color,
+          :tick_color => :hex_color,
+          :style => [:axis_tick, :axis_only, :tick_only, :none],
           :size => :natural_number}, params)
 
         @labels_set = true
 
         @labels = {} if @labels.nil?
         @labels[params[:type]] = {}
-
         @labels[params[:type]][:prefix] = params[:prefix] == ' ' ? '' : params[:prefix]
         @labels[params[:type]][:postfix] = params[:postfix] == ' ' ? '' : params[:postfix]
         @labels[params[:type]][:decimal]  = params[:decimal]
         @labels[params[:type]][:color] = params[:color]
         @labels[params[:type]][:size] = params[:size]
+        @labels[params[:type]][:style] = params[:style]
+        @labels[params[:type]][:tick_color] = params[:tick_color]
         @labels[params[:type]][:data] = params[:data]
       end
 
@@ -59,6 +64,14 @@ module Analytica
         bar_settings
       end
 
+      def add_custom(item)
+        enforce!(:string, item)
+
+        @custom_set = true
+        @custom += "&amp;" if @custom.size > 0
+        @custom += item
+      end
+
       def generate_title
         options = {}
         if @title_set
@@ -71,11 +84,7 @@ module Analytica
         options = {}
         if @labels_set
           if @labels[:data]
-            @labels[:data][:data].each {|element| data_string += ",#{element.to_f}"}
-            data_labels = {
-              :custom => "chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}&amp;chds=0,#{datamax}"
-            }
-            options.merge!(data_labels)
+            add_custom("chm=N#{@labels[:data][:prefix]}*f#{@labels[:data][:decimal]}*#{@labels[:data][:postfix]},#{@labels[:data][:color]},0,-1,#{@labels[:data][:size]}&amp;chds=0,#{datamax}")
           end
 
           if @labels[:axis]
@@ -83,21 +92,68 @@ module Analytica
               :axis_with_labels => ['x', 'y'],
               :axis_labels => [@labels[:axis][:data], ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"]]
             }
+
+            axis_style = case @labels[:axis][:style]
+             when :axis_tick
+               "lt"
+             when :axis_only
+               "l"
+             when :tick_only
+               "t"
+             when :none
+               "_"
+            end
+
+            add_custom("chxs=0N#{@labels[:axis][:prefix]}*f#{@labels[:axis][:decimal]}*#{@labels[:axis][:postfix]},#{@labels[:axis][:color]},#{@labels[:axis][:size]},#{axis_style},#{@labels[:axis][:tick_color]}|1N#{@labels[:axis][:prefix]}*f#{@labels[:axis][:decimal]}*#{@labels[:axis][:postfix]},#{@labels[:axis][:color]},#{@labels[:axis][:size]},#{axis_style},#{@labels[:axis][:tick_color]}") #http://code.google.com/apis/chart/docs/chart_params.html
             options.merge!(axis_labels)
+
           elsif @labels[:x_axis]
             x_axis_label = {
-              :axis_with_labels => 'x',
+              :axis_with_labels => ['x'],
               :axis_labels => @labels[:x_axis][:data].size == 0 ? self.map{|n|"#{n}"} : @labels[:x_axis][:data]
             }
+
+            axis_style = case @labels[:x_axis][:style]
+             when :axis_tick
+               "lt"
+             when :axis_only
+               "l"
+             when :tick_only
+               "t"
+             when :none
+               "_"
+            end
+
+            add_custom("chxs=0N#{@labels[:x_axis][:prefix]}*f#{@labels[:x_axis][:decimal]}*#{@labels[:x_axis][:postfix]},#{@labels[:x_axis][:color]},#{@labels[:x_axis][:size]},#{axis_style},#{@labels[:x_axis][:tick_color]}") #http://code.google.com/apis/chart/docs/chart_params.html
             options.merge!(x_axis_label)
           elsif @labels[:y_axis]
             y_axis_label = {
-              :axis_with_labels => 'y',
+              :axis_with_labels => ['y'],
               :axis_labels => @labels[:y_axis][:data].size == 0 ? ["#{0}", "#{(datamax*0.5).to_i}",  "#{datamax.to_i}"] : @labels[:y_axis][:data]
             }
+            axis_style = case @labels[:y_axis][:style]
+             when :axis_tick
+               "lt"
+             when :axis_only
+               "l"
+             when :tick_only
+               "t"
+             when :none
+               "_"
+            end
+
+            add_custom("chxs=0N#{@labels[:y_axis][:prefix]}*f#{@labels[:y_axis][:decimal]}*#{@labels[:y_axis][:postfix]},#{@labels[:y_axis][:color]},#{@labels[:y_axis][:size]},#{axis_style},#{@labels[:y_axis][:tick_color]}") #http://code.google.com/apis/chart/docs/chart_params.html
             options.merge!(y_axis_label)
           end
         end
+        options
+      end
+
+      def generate_custom
+        options = {
+          :custom => @custom
+        }
+        @custom = ""
         options
       end
 
@@ -105,6 +161,7 @@ module Analytica
         options = {}
         options.merge!(generate_labels)
         options.merge!(generate_title)
+        options.merge!(generate_custom)
         options
       end
     end
